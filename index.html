@@ -1,20 +1,414 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>minha galeria IS</title>
+    <title>Galeria FC Barcelona</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .logo-barca {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #004D98 0%, #A50044 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0, 77, 152, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(90deg, #004D98, #A50044, #EDBB00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(5, 250px);
+            gap: 20px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            background: #1a1a2e;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 77, 152, 0.4);
+            border-color: #EDBB00;
+            z-index: 10;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            display: block;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 77, 152, 0.95), transparent);
+            padding: 30px 20px 20px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+            z-index: 2;
+        }
+
+        .gallery-item:hover .overlay {
+            transform: translateY(0);
+        }
+
+        .overlay h3 {
+            color: #EDBB00;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .overlay p {
+            color: #fff;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Item especial - destaque */
+        .gallery-item.featured {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        /* Cores temáticas nos cantos */
+        .corner {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            z-index: 0;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .corner.top-left {
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, #004D98 0%, transparent 70%);
+        }
+
+        .corner.top-right {
+            top: 0;
+            right: 0;
+            background: linear-gradient(-135deg, #A50044 0%, transparent 70%);
+        }
+
+        .corner.bottom-left {
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(45deg, #EDBB00 0%, transparent 70%);
+        }
+
+        .corner.bottom-right {
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(-45deg, #004D98 0%, transparent 70%);
+        }
+
+        /* Responsividade */
+        @media (max-width: 968px) {
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(8, 200px);
+            }
+            
+            .gallery-item.featured {
+                grid-column: span 2;
+                grid-row: span 2;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .gallery {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(15, 250px);
+            }
+            
+            .gallery-item.featured {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .gallery-item {
+            animation: fadeIn 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(5) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+        .gallery-item:nth-child(7) { animation-delay: 0.7s; }
+        .gallery-item:nth-child(8) { animation-delay: 0.8s; }
+        .gallery-item:nth-child(9) { animation-delay: 0.9s; }
+        .gallery-item:nth-child(10) { animation-delay: 1.0s; }
+        .gallery-item:nth-child(11) { animation-delay: 1.1s; }
+        .gallery-item:nth-child(12) { animation-delay: 1.2s; }
+        .gallery-item:nth-child(13) { animation-delay: 1.3s; }
+        .gallery-item:nth-child(14) { animation-delay: 1.4s; }
+        .gallery-item:nth-child(15) { animation-delay: 1.5s; }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .motto {
+            color: #EDBB00;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+    </style>
 </head>
-
-
-
-
 <body>
-     <img src="https://cdn-img.zerozero.pt/img/history/imgS620I11792T20190730174706.png">
+    <div class="corner top-left"></div>
+    <div class="corner top-right"></div>
+    <div class="corner bottom-left"></div>
+    <div class="corner bottom-right"></div>
 
+    <div class="container">
+        <header>
+            <div class="logo-barca">FCB</div>
+            <h1>FC Barcelona</h1>
+            <p class="subtitle">Galeria Oficial - 15 Momentos Inesquecíveis</p>
+        </header>
 
+        <div class="gallery">
+            <!-- Linha 1 -->
+            <div class="gallery-item featured">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/a91b5930444d34b142939838fd8983005053a19b.jpg" alt="Time Oficial 2023/24">
+                <div class="overlay">
+                    <h3>Elenco 2023/24</h3>
+                    <p>Foto oficial da temporada com o plantel completo</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/54192a0543e5d2433fe9bd7da0de4bdbde078d73.jpg" alt="Spotify Camp Nou">
+                <div class="overlay">
+                    <h3>Spotify Camp Nou</h3>
+                    <p>A casa do Barcelona</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/9f9fba8d1759dfa02d6d2b1edff0f1d24d9f1652.jpg" alt="Números Oficiais">
+                <div class="overlay">
+                    <h3>Números 2024/25</h3>
+                    <p>Camisas oficiais do elenco</p>
+                </div>
+            </div>
 
+            <!-- Linha 2 -->
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/6a10a3900d3b7faa137c5cb9ff216dce5ca59910.jpg" alt="Celebrações Históricas">
+                <div class="overlay">
+                    <h3>Celebrações</h3>
+                    <p>Momentos épicos de jogadores lendários</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/upload.wikimedia.org/146450b2da616e797ffb7ac1028e80dee43c1d91.jpg" alt="Camp Nou Aéreo">
+                <div class="overlay">
+                    <h3>Vista Aérea</h3>
+                    <p>O majestoso Camp Nou de cima</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/i.ebayimg.com/ac73e7345aa8fe8d772453329bbda67fcc31652d.jpg" alt="Escudo FCB">
+                <div class="overlay">
+                    <h3>Escudo Oficial</h3>
+                    <p>O símbolo do clube</p>
+                </div>
+            </div>
 
-    
+            <!-- Linha 3 -->
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/images2.minutemediacdn.com/288ba6fa3b29e4393a9ab8f3005db7935eed19fb.jpg" alt="Bandeira Barcelona">
+                <div class="overlay">
+                    <h3>Bandeira</h3>
+                    <p>Blaugrana sempre presente</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/01172e0be8bda9105b982cb16ba52f95a423432e.jpeg" alt="Time Rakuten">
+                <div class="overlay">
+                    <h3>Era Rakuten</h3>
+                    <p>Elenco histórico do clube</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/barcauniversal.com/ad2c1ef5022d4dd9cbd9e908b15efe315afbb79e.jpg" alt="Supercopa 2025">
+                <div class="overlay">
+                    <h3>Supercopa 2025</h3>
+                    <p>Celebração do título</p>
+                </div>
+            </div>
+
+            <!-- Linha 4 -->
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/c6dd6d641b39444b4533188effa34b666812b715.jpg" alt="Elenco Completo">
+                <div class="overlay">
+                    <h3>Plantel Atual</h3>
+                    <p>Time pronto para a temporada</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/54192a0543e5d2433fe9bd7da0de4bdbde078d73.jpg" alt="Estádio Lotado">
+                <div class="overlay">
+                    <h3>Torcida</h3>
+                    <p>A força da torcida culé</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/9f9fba8d1759dfa02d6d2b1edff0f1d24d9f1652.jpg" alt="Dorsais">
+                <div class="overlay">
+                    <h3>Dorsais</h3>
+                    <p>Números dos jogadores</p>
+                </div>
+            </div>
+
+            <!-- Linha 5 -->
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/www.fcbarcelona.com/6a10a3900d3b7faa137c5cb9ff216dce5ca59910.jpg" alt="Gols Históricos">
+                <div class="overlay">
+                    <h3>Gols Épicos</h3>
+                    <p>Comemorações inesquecíveis</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/upload.wikimedia.org/146450b2da616e797ffb7ac1028e80dee43c1d91.jpg" alt="Arquitetura">
+                <div class="overlay">
+                    <h3>Arquitetura</h3>
+                    <p>O icônico estádio</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://kimi-web-img.moonshot.cn/img/barcauniversal.com/ad2c1ef5022d4dd9cbd9e908b15efe315afbb79e.jpg" alt="Títulos">
+                <div class="overlay">
+                    <h3>Conquistas</h3>
+                    <p>Levantando mais uma taça</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 FC Barcelona Galeria - Criado por um fã Culé</p>
+            <p class="motto">"Més que un club"</p>
+        </footer>
+    </div>
+
+    <script>
+        // Efeito de clique nas imagens apenas
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+    </script>
 </body>
 </html>
